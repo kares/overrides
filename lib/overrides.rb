@@ -50,10 +50,15 @@ module Overrides
   class Error < NoMethodError; end
 
   def overrides(*names)
-    if names.empty? # next method def
+    if names.empty? # next method def - singleton or instance
       @_override = true
     else
-      names.each do |name|
+      names.each do |name| # only for instance methods
+        unless Overrides.includes_method? self.instance_methods(false), name
+          msg = "(instance) method #{name.inspect} not found in "
+          raise NoMethodError,
+            msg << ( self.is_a?(Class) ? 'class ' : 'module ' ) << self.inspect
+        end
         unless Overrides.overriden?(self, name)
           raise Error, "previous (instance) method #{name.inspect} not found"
         end
@@ -78,20 +83,27 @@ module Overrides
   end
 
   def self.overriden?(klass, method, instance = true)
-    method = method.to_s if RUBY_VERSION < '1.9'
     if instance
       klass.included_modules.each do |mod|
-        return true if mod.instance_methods(true).include? method
+        return true if includes_method? mod.instance_methods(true), method
       end
       return false unless klass.is_a?(Class) # "only" a Module ...
-      return klass.superclass.instance_methods(true).include? method
+      return includes_method? klass.superclass.instance_methods(true), method
     else
       (class << klass; self; end).included_modules.each do |mod|
-        return true if mod.instance_methods(true).include? method
+        return true if includes_method? mod.instance_methods(true), method
       end
       return false unless klass.is_a?(Class) # "only" a Module ...
-      return klass.superclass.methods(true).include? method
+      return includes_method? klass.superclass.methods(true), method
     end
   end
+
+  def self.includes_method?(methods, name)
+    methods.include? name
+  end
+
+  def self.includes_method?(methods, name)
+    methods.include? name.to_s
+  end if RUBY_VERSION < '1.9'
 
 end

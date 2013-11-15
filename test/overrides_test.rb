@@ -6,6 +6,8 @@ require 'minitest/autorun'
 
 class OverridesTest < MiniTest::Unit::TestCase; end
 
+# ========================================
+
 class Ferko
 
   extend Overrides
@@ -35,6 +37,8 @@ OverridesTest.class_eval do
 
 end
 
+# ========================================
+
 class Jozko < Ferko
 
   overrides
@@ -57,6 +61,8 @@ OverridesTest.class_eval do
 
 end
 
+# ========================================
+
 class Jozko
 
   overrides
@@ -71,6 +77,8 @@ OverridesTest.class_eval do
   end
 
 end
+
+# ========================================
 
 class Janko < Ferko
 
@@ -89,6 +97,8 @@ OverridesTest.class_eval do
   end
 
 end
+
+# ========================================
 
 class Jozko
 
@@ -120,6 +130,27 @@ OverridesTest.class_eval do
       Jozko.class_eval do
         overrides
         def self.kuk; end
+      end
+    end
+  end
+
+end
+
+# ========================================
+
+class Ferko
+  def sak; end
+end
+
+class Petko < Ferko
+end
+
+OverridesTest.class_eval do
+
+  def test_fails_when_method_not_defined
+    assert_raises NoMethodError do
+      Petko.class_eval do
+        overrides :sak
       end
     end
   end
