@@ -47,10 +47,10 @@ require 'overrides/version'
 #
 module Overrides
 
-  Error = NoMethodError
+  class Error < NoMethodError; end
 
   def overrides(*names)
-    if names.empty? # next method
+    if names.empty? # next method def
       @_override = true
     else
       names.each do |name|

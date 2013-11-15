@@ -98,21 +98,25 @@ end
 
 OverridesTest.class_eval do
 
+  def test_uses_no_method_error
+    assert_kind_of NoMethodError, Overrides::Error.new
+  end
+
   def test_fails_when_override_not_met
-    assert_raises NoMethodError do
+    assert_raises Overrides::Error do
       Jozko.class_eval do
         overrides :jak
       end
     end
 
-    assert_raises NoMethodError do
+    assert_raises Overrides::Error do
       Jozko.class_eval do
         overrides
         def tak; end
       end
     end
 
-    assert_raises NoMethodError do
+    assert_raises Overrides::Error do
       Jozko.class_eval do
         overrides
         def self.kuk; end
