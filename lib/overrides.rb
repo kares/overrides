@@ -78,6 +78,7 @@ module Overrides
   end
 
   def self.overriden?(klass, method, instance = true)
+    method = method.to_s if RUBY_VERSION < '1.9'
     if instance
       klass.included_modules.each do |mod|
         return true if mod.instance_methods(true).include? method
