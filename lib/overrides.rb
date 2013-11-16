@@ -2,10 +2,11 @@ require 'overrides/version'
 
 # Allows for an #overrides annotation for your methods.
 #
-# Thus might help you e.g. during refactoring (method renaming) to assure methods
-# expected to call a super will fail early during def time instead of when called.
+# This might help during refactoring (method renaming) to assure methods
+# expected to be overriding another (and calling super) fail early during
+# definition time instead of when called.
 #
-# Sample :
+# Usage :
 #
 #     class Message
 #       extend Overrides
@@ -26,7 +27,7 @@ require 'overrides/version'
 #     end
 #
 #
-# Without arguments works with singleton methods as well :
+# Without arguments (before method) works with singleton methods as well :
 #
 #     class Message
 #       extend Overrides
@@ -47,6 +48,7 @@ require 'overrides/version'
 #
 module Overrides
 
+  # Custom (missing method error) raised from {#overrides}.
   class Error < NoMethodError; end
 
   def overrides(*names)
@@ -66,6 +68,7 @@ module Overrides
     end
   end
 
+  # @private
   def method_added(name)
     return super unless (@_override ||= nil); @_override = false
     unless Overrides.overriden?(self, name, true)
@@ -74,6 +77,7 @@ module Overrides
     super
   end
 
+  # @private
   def singleton_method_added(name)
     return super unless (@_override ||= nil); @_override = false
     unless Overrides.overriden?(self, name, false)
@@ -82,6 +86,8 @@ module Overrides
     super
   end
 
+  # Checks if a method was previously available in the given module's method
+  # resolution chain. Assumes instance methods by default.
   def self.overriden?(klass, method, instance = true)
     if instance
       klass.included_modules.each do |mod|
@@ -98,10 +104,12 @@ module Overrides
     end
   end
 
+  # @private
   def self.includes_method?(methods, name)
     methods.include? name
   end
 
+  # @private
   def self.includes_method?(methods, name)
     methods.include? name.to_s
   end if RUBY_VERSION < '1.9'

@@ -156,3 +156,23 @@ OverridesTest.class_eval do
   end
 
 end
+
+# ========================================
+
+class Otakar
+  def coje; 'tha-nic'; end
+end
+
+class Bohuslav < Otakar; end
+
+OverridesTest.class_eval do
+
+  def test_works_for_all_when_required
+    require 'overrides/for_all'
+    Bohuslav.class_eval do
+      overrides
+      def coje; 'ta-daco'; end
+    end
+  end
+
+end

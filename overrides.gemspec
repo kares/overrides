@@ -9,7 +9,9 @@ Gem::Specification.new do |gem|
   gem.authors       = ["Karol Bucek"]
   gem.email         = ["self@kares.org"]
   gem.summary       = %q{an #overrides annotation for your methods}
-  gem.description   = %q{An #overrides annotation for your (Ruby) methods.}
+  gem.description   = %q{Helps during refactoring (method renaming) to assure
+  methods expected to be overriding another (and calling super) fail early during
+  definition time instead of when called.}
   gem.homepage      = "http://github.com/kares/overrides"
   gem.license       = "MIT"
 
